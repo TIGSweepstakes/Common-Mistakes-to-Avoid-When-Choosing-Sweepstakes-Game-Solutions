@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13 Ways Sweepstakes Platforms Fail Operators Before They Scale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1117;
+    --bg-2:#0a0e14;
+    --surface:#161c27;
+    --surface-2:#1d2530;
+    --border:#2a3341;
+    --text:#e7e4dc;
+    --text-dim:#9aa3b2;
+    --text-faint:#5c6579;
+    --gold:#d4a24c;
+    --gold-dim:#8a6f3d;
+    --teal:#4fa98c;
+    --brick:#c1594a;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--gold); color:var(--bg-2); }
+
+  a{ color:var(--gold); }
+
+  /* progress rail */
+  #progress{
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background:linear-gradient(90deg, var(--teal), var(--gold));
+    z-index:100; transition:width .1s linear;
+  }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* NAV */
+  nav{
+    border-bottom:1px solid var(--border);
+    padding:22px 0;
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.12em;
+    color:var(--text-dim);
+    text-decoration:none;
+  }
+  .brand b{ color:var(--gold); font-weight:600; }
+  .nav-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:.08em;
+  }
+
+  /* HERO */
+  .hero{ padding:88px 0 56px; border-bottom:1px solid var(--border); }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.16em;
+    color:var(--teal);
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--teal);
+    display:inline-block;
+    border-radius:50%;
+    box-shadow:0 0 0 3px rgba(79,169,140,.18);
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(34px, 6vw, 54px);
+    line-height:1.06;
+    letter-spacing:-.01em;
+    color:#fff;
+    max-width:14ch;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--gold);
+  }
+  .dek{
+    margin-top:24px;
+    font-size:19px;
+    color:var(--text-dim);
+    max-width:56ch;
+    font-weight:400;
+  }
+
+  .stat-row{
+    display:flex;
+    gap:0;
+    margin-top:44px;
+    border-top:1px solid var(--border);
+  }
+  .stat{
+    flex:1;
+    padding:18px 20px 0 0;
+    border-right:1px solid var(--border);
+  }
+  .stat:last-child{ border-right:none; }
+  .stat .num{
+    font-family:var(--mono);
+    font-size:26px;
+    color:var(--gold);
+    font-weight:600;
+  }
+  .stat .label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+
+  /* SECTION generic */
+  section{ padding:56px 0; }
+  section.tight{ padding-top:0; }
+  .lede{
+    font-size:19px;
+    color:var(--text);
+    max-width:62ch;
+  }
+  .lede + .lede{ margin-top:18px; color:var(--text-dim); }
+
+  h2{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:28px;
+    color:#fff;
+    margin-bottom:8px;
+    letter-spacing:-.005em;
+  }
+  .section-intro{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:58ch;
+    margin-bottom:36px;
+  }
+
+  /* AUDIT LIST */
+  .audit-list{
+    border-top:1px solid var(--border);
+  }
+  .audit-row{
+    border-bottom:1px solid var(--border);
+    padding:30px 0;
+    display:grid;
+    grid-template-columns:88px 1fr;
+    gap:22px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .audit-row.in{ opacity:1; transform:translateY(0); }
+
+  .audit-index{
+    font-family:var(--mono);
+    color:var(--text-faint);
+    font-size:13px;
+    padding-top:4px;
+  }
+  .audit-index .n{
+    display:block;
+    font-size:22px;
+    color:var(--gold);
+    font-weight:600;
+    line-height:1;
+    margin-bottom:6px;
+  }
+
+  .audit-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .audit-title{
+    font-family:var(--display);
+    font-size:21px;
+    font-weight:600;
+    color:#fff;
+  }
+  .tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:3px;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .tag.risk{ color:var(--brick); border-color:rgba(193,89,74,.35); background:rgba(193,89,74,.08); }
+  .tag.growth{ color:var(--teal); border-color:rgba(79,169,140,.35); background:rgba(79,169,140,.08); }
+  .tag.gold{ color:var(--gold); border-color:rgba(212,162,76,.35); background:rgba(212,162,76,.08); }
+
+  .audit-body p{
+    color:var(--text-dim);
+    font-size:16px;
+  }
+  .audit-body p + p{ margin-top:10px; }
+
+  .chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:14px;
+  }
+  .chip{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:5px 10px;
+    border-radius:4px;
+  }
+
+  /* CHECKLIST */
+  .checklist{
+    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .check-item{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  .check-item:last-child{ border-bottom:none; }
+  .check-mark{
+    font-family:var(--mono);
+    color:var(--teal);
+    font-size:15px;
+    margin-top:2px;
+  }
+  .check-text{
+    font-size:15.5px;
+    color:var(--text);
+  }
+  .check-text b{ color:#fff; font-weight:600; }
+
+  /* CONCLUSION */
+  .conclusion{
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:52px 0;
+  }
+  .conclusion .lede{ font-size:21px; color:#fff; font-family:var(--display); font-weight:500; line-height:1.4; max-width:none; }
+  .conclusion p{ margin-top:18px; color:var(--text-dim); font-size:16px; max-width:64ch; }
+
+  /* CTA / FOOTER */
+  footer{ padding:60px 0 80px; }
+  .cta-box{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:36px;
+    position:relative;
+    overflow:hidden;
+  }
+  .cta-box::before{
+    content:"";
+    position:absolute;
+    top:-40%; right:-10%;
+    width:220px; height:220px;
+    background:radial-gradient(circle, rgba(212,162,76,.14), transparent 70%);
+  }
+  .cta-eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .cta-box h3{
+    font-family:var(--display);
+    font-size:24px;
+    color:#fff;
+    font-weight:600;
+    margin-bottom:12px;
+  }
+  .cta-box p{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:56ch;
+  }
+  .foot-meta{
+    margin-top:40px;
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:.04em;
+  }
+
+  @media (max-width:600px){
+    .audit-row{ grid-template-columns:1fr; }
+    .audit-index{ display:flex; align-items:center; gap:10px; }
+    .audit-index .n{ margin-bottom:0; }
+    .stat-row{ flex-direction:column; }
+    .stat{ border-right:none; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:4px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .audit-row{ transition:none; opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><b>TIG</b>Sweepstakes</a>
+    <span class="nav-tag">Platform Selection Guide</span>
+  </div>
+</nav>
+
+<div id="top" class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Operator Diligence · 13 Failure Points</div>
+    <h1>Common Mistakes to Avoid When Choosing a <em>Sweepstakes</em> Platform</h1>
+    <p class="dek">With dozens of sweepstakes software solutions competing for attention, the platforms that look identical at a demo often diverge sharply once real players, real volume, and real regulation show up. Here's what separates a foundation from a liability.</p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">13</div><div class="label">Mistakes to Audit</div></div>
+      <div class="stat"><div class="num">10</div><div class="label">Step Evaluation</div></div>
+      <div class="stat"><div class="num">01</div><div class="label">Platform Decision</div></div>
+    </div>
+  </div>
+</div>
+
+<section class="tight">
+  <div class="wrap">
+    <p class="lede">Choosing the right technology is one of the most consequential decisions for any business entering or expanding in the online sweepstakes gaming industry. Selecting software on price or interface polish alone tends to surface its cost later — in downtime, redevelopment, or a player base the platform can't hold.</p>
+    <p class="lede">A suitable solution needs to deliver on scalability, security, integrations, customization, analytics, and support — not just at launch, but as the business grows into markets and volumes it hasn't seen yet.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The Audit</h2>
+    <p class="section-intro">Thirteen places operators commonly underweight a platform decision — ordered from the deal itself through to whether the software can still serve the business in two years.</p>
+
+    <div class="audit-list" id="audit-list">
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">01</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Choosing software on price alone</span><span class="tag risk">Cost</span></div>
+          <div class="audit-body">
+            <p>Cost matters, but the cheapest option is often the most expensive one over time. Budget solutions frequently skip infrastructure that only becomes visible once it's missing.</p>
+            <div class="chip-row">
+              <span class="chip">Scalable infrastructure</span><span class="chip">Security tools</span><span class="chip">API integrations</span><span class="chip">Analytics</span><span class="chip">CRM</span><span class="chip">Support</span>
+            </div>
+            <p style="margin-top:14px;">Evaluate total cost of ownership — maintenance, upgrades, integrations, and future development — not just the initial invoice.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">02</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Ignoring scalability</span><span class="tag risk">Growth</span></div>
+          <div class="audit-body">
+            <p>A platform that runs smoothly at launch can buckle as the player base grows. Before committing, confirm the software can absorb rising registrations, transaction volume, larger game libraries, multiple brands, and new-market expansion without a rebuild.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">03</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Overlooking mobile performance</span><span class="tag gold">Experience</span></div>
+          <div class="audit-body">
+            <p>Most online gaming activity now happens on mobile. A platform that feels solid on desktop but lags, mis-touches, or loads slowly on a phone will quietly bleed engagement. Treat mobile responsiveness, load speed, and cross-device account management as core requirements, not add-ons.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">04</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Limited game integration</span><span class="tag growth">Content</span></div>
+          <div class="audit-body">
+            <p>Game variety drives acquisition and retention. Some platforms make it genuinely hard to add providers later. Confirm flexible integration with multiple game providers and APIs upfront — a flexible ecosystem keeps content strategy in the operator's hands, not the vendor's.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">05</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Neglecting security</span><span class="tag risk">Security</span></div>
+          <div class="audit-body">
+            <p>Security has to cover player accounts, personal data, transactions, admin access, wallets, and infrastructure all at once. Look for encryption, secure authentication, access controls, monitoring, and fraud-prevention built in — not bolted on after an incident.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">06</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">No customization options</span><span class="tag gold">Brand</span></div>
+          <div class="audit-body">
+            <p>Every operator has different branding, operations, and acquisition strategy. A rigid platform flattens all of that into sameness. Check what can actually be customized — branding, UI, promotions, rewards, player journeys, admin workflows, and reporting dashboards.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">07</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Ignoring API and third-party integrations</span><span class="tag growth">Integrations</span></div>
+          <div class="audit-body">
+            <p>Modern platforms rarely run standalone. Payment gateways, CRM, game providers, analytics, affiliates, marketing tools, and support software all need to connect. Confirm the API architecture is flexible enough for the systems already in use — and the ones planned next.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">08</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Overlooking analytics and reporting</span><span class="tag gold">Data</span></div>
+          <div class="audit-body">
+            <p>Without reliable data, it's hard to know how the platform is actually performing. Meaningful reporting on player activity, game performance, retention, acquisition, promotions, and transactions turns operations from guesswork into decisions.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">09</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Underweighting the admin dashboard</span><span class="tag gold">Operations</span></div>
+          <div class="audit-body">
+            <p>Attention usually goes to the player-facing side, but the backend is where day-to-day operations live. A well-built admin dashboard makes it straightforward to manage players, games, promotions, transactions, reports, content, and permissions — and a poor one turns every task into a workaround.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">10</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Not asking about post-launch support</span><span class="tag risk">Support</span></div>
+          <div class="audit-body">
+            <p>Launch is the start of the software's life, not the end of it. Bug fixes, security updates, performance tuning, API maintenance, and new integrations are ongoing needs — confirm what support looks like after the contract is signed, not just before.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">11</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Ignoring the provider's track record</span><span class="tag gold">Diligence</span></div>
+          <div class="audit-body">
+            <p>Software quality tends to reflect the expertise behind it. Look into the provider's past projects, technical depth, integration experience, support model, and history scaling other operators — a partner who's solved these problems before will spot the next one earlier.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">12</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Underestimating compliance requirements</span><span class="tag risk">Compliance</span></div>
+          <div class="audit-body">
+            <p>Sweepstakes gaming carries real legal and regulatory obligations that vary by market. Check whether the technology supports player verification, promotional rules, transaction monitoring, data protection, and responsible-gaming practices. Independent legal and compliance advice is essential for each market targeted.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audit-row">
+        <div class="audit-index"><span class="n">13</span>/13</div>
+        <div>
+          <div class="audit-head"><span class="audit-title">Choosing a platform that can't evolve</span><span class="tag growth">Future</span></div>
+          <div class="audit-body">
+            <p>Player expectations move faster than most contracts. A platform that fits today's requirements can be outdated within a product cycle if it can't accommodate what's next — AI-driven personalization, deeper analytics, new payment methods, more game providers, and automation.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The Evaluation Checklist</h2>
+    <p class="section-intro">Before signing with a provider, run the decision through a structured process rather than a feature comparison alone.</p>
+
+    <div class="checklist">
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Define <b>business objectives</b> before comparing providers</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">List essential features and <b>prioritize</b> them</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Evaluate <b>scalability</b> for future growth</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Review <b>security</b> capabilities carefully</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Check <b>integration</b> options and API availability</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Test the experience across <b>desktop and mobile</b></span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Assess <b>analytics and reporting</b> capabilities</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Review <b>customization</b> options</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Ask about <b>technical support</b> and maintenance</span></div>
+      <div class="check-item"><span class="check-mark">✓</span><span class="check-text">Consider <b>long-term costs</b>, not just the initial price</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="conclusion">
+  <div class="wrap">
+    <p class="lede">Choosing the right sweepstakes software takes more than comparing features and prices side by side.</p>
+    <p>It requires weighing scalability, security, mobile performance, game integrations, analytics, customization, compliance, and ongoing support together — because a platform that scores well on one and poorly on another still fails the business. A carefully selected platform builds the foundation for better player experiences, cleaner operations, and durable growth. Software chosen without those future requirements in mind tends to come back later, as redevelopment cost.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="cta-box">
+      <div class="cta-eyebrow">TIGSweepstakes</div>
+      <h3>Built for operators who plan past launch day</h3>
+      <p>TIGSweepstakes helps businesses build scalable sweepstakes gaming platforms — with flexible technology, game integrations, player management, analytics, and ongoing support. The focus stays on performance, flexibility, and long-term scalability, so operators have a stronger foundation to grow on.</p>
+    </div>
+    <div class="foot-meta">
+      <span>SWEEPSTAKES PLATFORM SELECTION GUIDE</span>
+      <span>TIGSWEEPSTAKES</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // scroll progress
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = scrolled + '%';
+  });
+
+  // reveal audit rows
+  const rows = document.querySelectorAll('.audit-row');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  rows.forEach(r => io.observe(r));
+</script>
+
+</body>
+</html>
